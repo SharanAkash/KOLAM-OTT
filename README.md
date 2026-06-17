@@ -1,100 +1,200 @@
-# Kolam OTT Platform
+# 🎬 KOLAM-OTT Platform
 
-A premium Tamil cinema streaming platform with Android and Web support.
+> Complete OTT (Over-The-Top) streaming platform with web, mobile, and backend services.
 
-## Project Structure
+## 🚀 Quick Start
+
+```bash
+# Clone the repository
+git clone <your-repo-url>
+cd kolam-ott
+
+# Install dependencies
+npm install
+
+# Start all services
+npm run dev
+```
+
+## 📁 Project Structure
 
 ```
 kolam-ott/
 ├── apps/
-│   ├── mobile/          # React Native app (Android)
-│   ├── web/             # Next.js web application
-│   └── admin/           # Admin dashboard
-├── packages/
-│   ├── ui/              # Shared UI components
-│   ├── api-client/      # API SDK
-│   └── types/           # Shared TypeScript types
-└── services/
-    ├── api/             # NestJS backend API
-    ├── video/           # Video transcoding service
-    └── payment/         # Payment webhook handler
+│   ├── web/          # Next.js web application
+│   └── mobile/       # React Native mobile app
+├── services/
+│   └── api/          # NestJS backend API
+├── docs/             # 📚 Complete documentation
+└── package.json      # Root workspace config
 ```
 
-## Tech Stack
+## 🎯 Features
 
-- **Frontend**: React Native, React Native Web, Next.js
-- **Backend**: NestJS, PostgreSQL, Prisma
-- **Video**: HLS streaming with adaptive bitrate
-- **Payments**: Stripe/Razorpay
-- **Deployment**: AWS/Vercel
+### Platform Features
+- ✅ **Multi-Platform**: Web, iOS, Android
+- ✅ **Authentication**: JWT-based auth with role management
+- ✅ **Subscriptions**: Multiple subscription plans
+- ✅ **Admin Panel**: Content management system
+- ✅ **Video Upload**: Cloud-based video storage
+- ✅ **Email Service**: User notifications
+- ✅ **Responsive Design**: Mobile-first approach
 
-## Getting Started
+### User Roles
+- 👑 **Admin**: Full access without subscription required
+- ⭐ **Premium User**: Access to all premium content
+- 👤 **Free User**: Limited access
+
+## 📚 Documentation
+
+All documentation has been moved to the [docs](./docs/) folder:
+
+### 🔐 Authentication
+- [README_AUTH.md](./docs/README_AUTH.md) - Authentication overview
+- [TEST_CREDENTIALS.md](./docs/TEST_CREDENTIALS.md) - Test user credentials
+- [QUICK_START_AUTH.md](./docs/QUICK_START_AUTH.md) - Quick auth setup
+- [AUTHENTICATION_SETUP.md](./docs/AUTHENTICATION_SETUP.md) - Complete auth guide
+- [FRONTEND_AUTH_INTEGRATION.md](./docs/FRONTEND_AUTH_INTEGRATION.md) - Frontend integration
+
+### ⚙️ Setup Guides
+- [SETUP_COMPLETE.md](./docs/SETUP_COMPLETE.md) - Complete setup guide
+- [QUICK_START_BACKEND.md](./docs/QUICK_START_BACKEND.md) - Backend quick start
+- [START_SERVICES.md](./docs/START_SERVICES.md) - Service management
+
+### 🎨 Features & Configuration
+- [CLOUDINARY_SETUP.md](./docs/CLOUDINARY_SETUP.md) - Media storage setup
+- [EMAIL_SETUP.md](./docs/EMAIL_SETUP.md) - Email service configuration
+- [RESPONSIVE_DESIGN.md](./docs/RESPONSIVE_DESIGN.md) - Responsive design guide
+- [BACKEND_ARCHITECTURE.md](./docs/BACKEND_ARCHITECTURE.md) - Backend structure
+
+### 📱 Mobile
+- [APK_BUILD_SUCCESS.md](./docs/APK_BUILD_SUCCESS.md) - Android build guide
+- [EMULATOR_QUICK_GUIDE.md](./docs/EMULATOR_QUICK_GUIDE.md) - Emulator setup
+
+### 👑 Admin Features
+- [WEB_ADMIN_READY.md](./docs/WEB_ADMIN_READY.md) - Admin panel guide
+- [ADMIN_LOGIN_COMPLETE.md](./docs/ADMIN_LOGIN_COMPLETE.md) - Admin login setup
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Web**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Mobile**: React Native, Expo
+
+### Backend
+- **API**: NestJS, Prisma, PostgreSQL
+- **Auth**: JWT, Passport.js
+- **Storage**: AWS S3 / Cloudinary
+- **Email**: Nodemailer
+
+### DevOps
+- **Version Control**: Git
+- **Package Manager**: npm
+- **Monorepo**: npm workspaces
+
+## 🎯 Getting Started
 
 ### Prerequisites
-
-- Node.js >= 18
+- Node.js 18+
 - PostgreSQL
-- Android Studio (for mobile development)
-- AWS account (for video storage)
+- npm or yarn
 
 ### Installation
 
-```bash
-# Install dependencies
-npm install
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-# Setup environment variables
-cp .env.example .env
+2. **Set up environment variables**
+   ```bash
+   cd services/api
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
 
-# Start database
-docker-compose up -d
+3. **Set up database**
+   ```bash
+   cd services/api
+   npm run prisma:generate
+   npm run prisma:migrate
+   npm run prisma:seed  # Creates test users
+   ```
 
-# Run migrations
-cd services/api && npx prisma migrate dev
+4. **Start services**
+   ```bash
+   # From root directory
+   npm run dev
 
-# Start development servers
-npm run dev
-```
+   # Or start individually:
+   npm run dev:web      # Web app
+   npm run dev:api      # Backend API
+   npm run dev:mobile   # Mobile app
+   ```
 
-### Development Commands
+## 👥 Test Users
 
-```bash
-# Run all services
-npm run dev
+Three test users are available after running the seed:
 
-# Run specific services
-npm run api        # Backend API
-npm run mobile     # Mobile app
-npm run web        # Web app
-npm run admin      # Admin dashboard
+| Role | Email | Password | Access |
+|------|-------|----------|--------|
+| 👑 Admin | admin@kolamott.com | Admin@123 | Full access (no subscription) |
+| ⭐ Premium | test@kolamott.com | Test@123 | Premium content |
+| 👤 Free | free@kolamott.com | Free@123 | Limited access |
 
-# Build for production
-npm run build
+See [TEST_CREDENTIALS.md](./docs/TEST_CREDENTIALS.md) for details.
 
-# Run tests
-npm run test
+## 🌐 Service URLs
 
-# Lint code
-npm run lint
-```
+| Service | Development URL | Default Port |
+|---------|----------------|--------------|
+| Web App | http://localhost:3000 | 3000 |
+| API | http://localhost:3001 | 3001 |
+| Mobile | Expo app | - |
+| Prisma Studio | http://localhost:5555 | 5555 |
 
-## Features
+## 📖 Key Documentation
 
-- ✅ User authentication (email/phone)
-- ✅ Video streaming with HLS
-- ✅ Content discovery and search
-- ✅ Subscription management
-- ✅ Payment integration
-- ✅ Offline downloads (mobile)
-- ✅ Watchlist and history
-- ✅ Admin content management
-- ✅ Multi-quality video playback
-- ✅ Tamil + English UI
+**New to the project?** Start here:
+1. [TEST_CREDENTIALS.md](./docs/TEST_CREDENTIALS.md) - Get test login credentials
+2. [QUICK_START_AUTH.md](./docs/QUICK_START_AUTH.md) - Set up authentication
+3. [SETUP_COMPLETE.md](./docs/SETUP_COMPLETE.md) - Complete setup guide
 
-## Environment Variables
+**Setting up features:**
+- [Backend Setup](./docs/QUICK_START_BACKEND.md)
+- [Admin Panel](./docs/WEB_ADMIN_READY.md)
+- [Email Service](./docs/EMAIL_SETUP.md)
+- [Cloud Upload](./docs/CLOUDINARY_SETUP.md)
 
-See `.env.example` for required environment variables.
+## 🔒 Security
 
-## License
+- JWT-based authentication
+- Password hashing with bcryptjs
+- Role-based access control (RBAC)
+- Subscription validation
+- Admin privileges
 
-Proprietary - All rights reserved
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
+
+## 📄 License
+
+[Your License Here]
+
+## 📞 Support
+
+For issues and questions:
+- Check the [docs](./docs/) folder
+- Open an issue on GitHub
+- Contact the development team
+
+---
+
+**Built with ❤️ for KOLAM-OTT**
+
+*See [docs/README.md](./docs/README.md) for complete documentation index*
