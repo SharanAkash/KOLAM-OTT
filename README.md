@@ -6,8 +6,8 @@
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
-cd kolam-ott
+git clone https://github.com/SharanAkash/KOLAM-OTT.git
+cd KOLAM-OTT
 
 # Install dependencies
 npm install
@@ -15,6 +15,10 @@ npm install
 # Start all services
 npm run dev
 ```
+
+**📖 For detailed setup instructions, see:**
+- [Quick Start Guide](./docs/QUICK_START.md) - Get running in 5 minutes
+- [Complete Build & Run Guide](./docs/BUILD_AND_RUN_GUIDE.md) - Comprehensive instructions
 
 ## 📁 Project Structure
 
@@ -57,6 +61,8 @@ All documentation has been moved to the [docs](./docs/) folder:
 - [FRONTEND_AUTH_INTEGRATION.md](./docs/FRONTEND_AUTH_INTEGRATION.md) - Frontend integration
 
 ### ⚙️ Setup Guides
+- [🚀 QUICK_START.md](./docs/QUICK_START.md) - **Get started in 5 minutes**
+- [📖 BUILD_AND_RUN_GUIDE.md](./docs/BUILD_AND_RUN_GUIDE.md) - **Complete build & run instructions**
 - [SETUP_COMPLETE.md](./docs/SETUP_COMPLETE.md) - Complete setup guide
 - [QUICK_START_BACKEND.md](./docs/QUICK_START_BACKEND.md) - Backend quick start
 - [START_SERVICES.md](./docs/START_SERVICES.md) - Service management
@@ -148,17 +154,18 @@ See [TEST_CREDENTIALS.md](./docs/TEST_CREDENTIALS.md) for details.
 
 | Service | Development URL | Default Port |
 |---------|----------------|--------------|
-| Web App | http://localhost:3000 | 3000 |
-| API | http://localhost:3001 | 3001 |
-| Mobile | Expo app | - |
+| Web App | http://localhost:3001 | 3001 |
+| Backend API | http://localhost:3002 | 3002 |
+| Mobile | Expo app | 8081 |
 | Prisma Studio | http://localhost:5555 | 5555 |
 
 ## 📖 Key Documentation
 
 **New to the project?** Start here:
-1. [TEST_CREDENTIALS.md](./docs/TEST_CREDENTIALS.md) - Get test login credentials
-2. [QUICK_START_AUTH.md](./docs/QUICK_START_AUTH.md) - Set up authentication
-3. [SETUP_COMPLETE.md](./docs/SETUP_COMPLETE.md) - Complete setup guide
+1. [🚀 QUICK_START.md](./docs/QUICK_START.md) - **Get running in 5 minutes**
+2. [📖 BUILD_AND_RUN_GUIDE.md](./docs/BUILD_AND_RUN_GUIDE.md) - **Complete build & run guide**
+3. [TEST_CREDENTIALS.md](./docs/TEST_CREDENTIALS.md) - Get test login credentials
+4. [QUICK_START_AUTH.md](./docs/QUICK_START_AUTH.md) - Set up authentication
 
 **Setting up features:**
 - [Backend Setup](./docs/QUICK_START_BACKEND.md)

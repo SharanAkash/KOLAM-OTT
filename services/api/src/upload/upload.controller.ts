@@ -51,4 +51,44 @@ export class UploadController {
     const url = await this.uploadService.uploadImage(file);
     return { url };
   }
+
+  @Post('thumbnail')
+  @UseInterceptors(FileInterceptor('thumbnail'))
+  async uploadThumbnail(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.mimetype)) {
+      throw new BadRequestException('Only JPEG, PNG, and WebP images are allowed');
+    }
+
+    const url = await this.uploadService.uploadThumbnail(file);
+    return { url };
+  }
+
+  @Post('trailer')
+  @UseInterceptors(FileInterceptor('trailer'))
+  async uploadTrailer(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+
+    // Validate file type
+    const allowedTypes = ['video/mp4', 'video/mpeg', 'video/quicktime'];
+    if (!allowedTypes.includes(file.mimetype)) {
+      throw new BadRequestException('Only MP4, MPEG, and MOV videos are allowed');
+    }
+
+    // Validate file size (max 500MB for trailers)
+    const maxSize = 500 * 1024 * 1024; // 500MB
+    if (file.size > maxSize) {
+      throw new BadRequestException('Trailer size exceeds 500MB limit');
+    }
+
+    const url = await this.uploadService.uploadTrailer(file);
+    return { url };
+  }
 }
