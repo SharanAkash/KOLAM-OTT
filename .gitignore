@@ -58,3 +58,6 @@ services/api/prisma/migrations
 # Logs
 logs
 *.log
+services/api/.env.qa
+infrastructure/terraform/outputs.json
+infrastructure/terraform/tfplan
