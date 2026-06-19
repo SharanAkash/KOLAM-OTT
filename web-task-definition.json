@@ -1,0 +1,59 @@
+{
+  "family": "kolam-ott-qa-web",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::637423656090:role/kolam-ott-qa-ecs-task-execution",
+  "taskRoleArn": "arn:aws:iam::637423656090:role/kolam-ott-qa-ecs-task",
+  "containerDefinitions": [
+    {
+      "name": "web",
+      "image": "637423656090.dkr.ecr.us-east-1.amazonaws.com/kolam-ott/qa/web:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        },
+        {
+          "name": "PORT",
+          "value": "3000"
+        },
+        {
+          "name": "NEXT_PUBLIC_API_URL",
+          "value": "http://kolam-ott-qa-alb-146970630.us-east-1.elb.amazonaws.com"
+        },
+        {
+          "name": "NEXTAUTH_URL",
+          "value": "http://kolam-ott-qa-alb-146970630.us-east-1.elb.amazonaws.com"
+        },
+        {
+          "name": "NEXTAUTH_SECRET",
+          "value": "gtgyPyiZR8aBdhlNYk0oPMIV4PWUAo/Ut27KyeAotbM="
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/kolam-ott-qa-web",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})\""],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ]
+}

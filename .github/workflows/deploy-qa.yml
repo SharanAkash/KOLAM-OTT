@@ -1,0 +1,212 @@
+name: Deploy to QA Environment
+
+on:
+  push:
+    branches:
+      - dev
+      - qa
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service to deploy (api, web, or all)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - api
+          - web
+          - all
+
+env:
+  AWS_REGION: us-east-1
+  PROJECT_NAME: kolam-ott
+  ENVIRONMENT: qa
+
+jobs:
+  deploy:
+    name: Deploy to QA
+    runs-on: ubuntu-latest
+    environment: qa
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push API image
+        if: github.event.inputs.service == 'api' || github.event.inputs.service == 'all' || github.event_name == 'push'
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.PROJECT_NAME }}/${{ env.ENVIRONMENT }}/api
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+            -f services/api/Dockerfile \
+            services/api
+
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Build and push Web image
+        if: github.event.inputs.service == 'web' || github.event.inputs.service == 'all' || github.event_name == 'push'
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.PROJECT_NAME }}/${{ env.ENVIRONMENT }}/web
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+            -f apps/web/Dockerfile \
+            apps/web
+
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Deploy API to ECS
+        if: github.event.inputs.service == 'api' || github.event.inputs.service == 'all' || github.event_name == 'push'
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Get current task definition
+          TASK_DEFINITION=$(aws ecs describe-task-definition \
+            --task-definition $PROJECT_NAME-$ENVIRONMENT-api \
+            --query taskDefinition)
+
+          # Update image in task definition
+          NEW_TASK_DEF=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_REGISTRY/$PROJECT_NAME/$ENVIRONMENT/api:$IMAGE_TAG" \
+            '.containerDefinitions[0].image = $IMAGE |
+            del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+
+          # Register new task definition
+          NEW_REVISION=$(aws ecs register-task-definition \
+            --cli-input-json "$NEW_TASK_DEF" \
+            --query 'taskDefinition.revision' \
+            --output text)
+
+          # Update ECS service
+          aws ecs update-service \
+            --cluster $PROJECT_NAME-$ENVIRONMENT \
+            --service api \
+            --task-definition $PROJECT_NAME-$ENVIRONMENT-api:$NEW_REVISION \
+            --force-new-deployment
+
+          echo "Deployed API revision $NEW_REVISION"
+
+      - name: Deploy Web to ECS
+        if: github.event.inputs.service == 'web' || github.event.inputs.service == 'all' || github.event_name == 'push'
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Get current task definition
+          TASK_DEFINITION=$(aws ecs describe-task-definition \
+            --task-definition $PROJECT_NAME-$ENVIRONMENT-web \
+            --query taskDefinition)
+
+          # Update image in task definition
+          NEW_TASK_DEF=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_REGISTRY/$PROJECT_NAME/$ENVIRONMENT/web:$IMAGE_TAG" \
+            '.containerDefinitions[0].image = $IMAGE |
+            del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+
+          # Register new task definition
+          NEW_REVISION=$(aws ecs register-task-definition \
+            --cli-input-json "$NEW_TASK_DEF" \
+            --query 'taskDefinition.revision' \
+            --output text)
+
+          # Update ECS service
+          aws ecs update-service \
+            --cluster $PROJECT_NAME-$ENVIRONMENT \
+            --service web \
+            --task-definition $PROJECT_NAME-$ENVIRONMENT-web:$NEW_REVISION \
+            --force-new-deployment
+
+          echo "Deployed Web revision $NEW_REVISION"
+
+      - name: Wait for deployment to stabilize
+        run: |
+          if [ "${{ github.event.inputs.service }}" == "api" ] || [ "${{ github.event.inputs.service }}" == "all" ] || [ "${{ github.event_name }}" == "push" ]; then
+            aws ecs wait services-stable \
+              --cluster $PROJECT_NAME-$ENVIRONMENT \
+              --services api
+          fi
+
+          if [ "${{ github.event.inputs.service }}" == "web" ] || [ "${{ github.event.inputs.service }}" == "all" ] || [ "${{ github.event_name }}" == "push" ]; then
+            aws ecs wait services-stable \
+              --cluster $PROJECT_NAME-$ENVIRONMENT \
+              --services web
+          fi
+
+      - name: Run database migrations
+        if: github.event.inputs.service == 'api' || github.event.inputs.service == 'all' || github.event_name == 'push'
+        run: |
+          # Get a running API task
+          TASK_ARN=$(aws ecs list-tasks \
+            --cluster $PROJECT_NAME-$ENVIRONMENT \
+            --service-name api \
+            --query 'taskArns[0]' \
+            --output text)
+
+          if [ "$TASK_ARN" != "None" ]; then
+            aws ecs execute-command \
+              --cluster $PROJECT_NAME-$ENVIRONMENT \
+              --task $TASK_ARN \
+              --container api \
+              --command "npx prisma migrate deploy" \
+              --interactive
+
+            echo "Database migrations completed"
+          else
+            echo "No running API task found, skipping migrations"
+          fi
+
+      - name: Deployment summary
+        run: |
+          echo "## QA Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Deployment completed successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** QA" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Services Deployed:**" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ github.event.inputs.service }}" == "api" ] || [ "${{ github.event.inputs.service }}" == "all" ] || [ "${{ github.event_name }}" == "push" ]; then
+            echo "- API ✅" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ github.event.inputs.service }}" == "web" ] || [ "${{ github.event.inputs.service }}" == "all" ] || [ "${{ github.event_name }}" == "push" ]; then
+            echo "- Web ✅" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**URLs:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Web: https://qa.YOUR_DOMAIN.com" >> $GITHUB_STEP_SUMMARY
+          echo "- API: https://api-qa.YOUR_DOMAIN.com" >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify deployment status
+        if: failure()
+        run: |
+          echo "❌ QA Deployment failed!" >> $GITHUB_STEP_SUMMARY
+          exit 1

@@ -14,8 +14,9 @@ async function bootstrap() {
   // Enable validation
   app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(3002);
-  console.log('🚀 Kolam OTT API running on http://localhost:3002');
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
+  console.log(`🚀 Kolam OTT API running on http://localhost:${port}`);
 }
 
 bootstrap();

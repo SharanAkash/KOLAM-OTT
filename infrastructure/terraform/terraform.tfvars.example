@@ -1,0 +1,30 @@
+# Terraform Variables for QA Environment
+# Copy this file to terraform.tfvars and fill in your actual values
+
+aws_region          = "us-east-1"
+environment         = "qa"
+project_name        = "kolam-ott"
+
+# VPC Configuration
+vpc_cidr            = "10.1.0.0/16"
+availability_zones  = ["us-east-1a", "us-east-1b"]
+
+# Database Configuration
+db_instance_class      = "db.t3.micro"
+db_allocated_storage   = 20
+db_name                = "kolam_ott_qa"
+db_username            = "kolam_qa"
+
+# ECS Configuration
+ecs_api_cpu    = 512
+ecs_api_memory = 1024
+ecs_web_cpu    = 256
+ecs_web_memory = 512
+
+# Domain Configuration
+# Replace YOUR_DOMAIN.com with your actual domain
+domain_name = "YOUR_DOMAIN.com"  # Example: example.com
+
+# SSL Certificate ARN from AWS Certificate Manager
+# Get this from: AWS Console → Certificate Manager → Your certificate
+certificate_arn = ""  # Example: arn:aws:acm:us-east-1:123456789012:certificate/abcd1234-5678-90ef-ghij-klmnopqrstuv
