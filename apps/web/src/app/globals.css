@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Color System - Kolam Design Tokens */
+  --color-primary: #fff6df;
+  --color-primary-container: #ffd700;
+  --color-primary-fixed: #ffe16d;
+  --color-primary-fixed-dim: #e9c400;
+  --color-on-primary: #3a3000;
+  --color-on-primary-container: #705e00;
+  --color-on-primary-fixed: #221b00;
+  --color-on-primary-fixed-variant: #544600;
+
+  --color-secondary: #c8c6c5;
+  --color-secondary-container: #474746;
+  --color-secondary-fixed: #e5e2e1;
+  --color-secondary-fixed-dim: #c8c6c5;
+  --color-on-secondary: #303030;
+  --color-on-secondary-container: #b7b5b4;
+  --color-on-secondary-fixed: #1b1b1c;
+  --color-on-secondary-fixed-variant: #474746;
+
+  --color-tertiary: #f8f6f5;
+  --color-tertiary-container: #dcd9d9;
+  --color-tertiary-fixed: #e4e2e1;
+  --color-tertiary-fixed-dim: #c8c6c5;
+  --color-on-tertiary: #303030;
+  --color-on-tertiary-container: #5f5f5f;
+  --color-on-tertiary-fixed: #1b1c1c;
+  --color-on-tertiary-fixed-variant: #474746;
+
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-on-error: #690005;
+  --color-on-error-container: #ffdad6;
+
+  --color-surface: #131313;
+  --color-surface-dim: #131313;
+  --color-surface-bright: #393939;
+  --color-surface-container-lowest: #0e0e0e;
+  --color-surface-container-low: #1c1b1b;
+  --color-surface-container: #201f1f;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-highest: #353534;
+  --color-surface-variant: #353534;
+  --color-on-surface: #e5e2e1;
+  --color-on-surface-variant: #d0c6ab;
+
+  --color-outline: #999077;
+  --color-outline-variant: #4d4732;
+
+  --color-background: #131313;
+  --color-on-background: #e5e2e1;
+
+  --color-inverse-surface: #e5e2e1;
+  --color-inverse-on-surface: #313030;
+  --color-inverse-primary: #705d00;
+
+  --color-surface-tint: #e9c400;
+
+  /* Spacing */
+  --spacing-stack-sm: 0.5rem;
+  --spacing-stack-md: 1.5rem;
+  --spacing-stack-lg: 3rem;
+  --spacing-gutter: 1.5rem;
+  --spacing-margin-mobile: 1.25rem;
+  --spacing-margin-desktop: 4rem;
+
+  /* Border Radius */
+  --radius: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  /* Typography */
+  --font-display-lg: Montserrat, sans-serif;
+  --font-display-lg-mobile: Montserrat, sans-serif;
+  --font-headline-md: Montserrat, sans-serif;
+  --font-body-lg: Inter, sans-serif;
+  --font-body-md: Inter, sans-serif;
+  --font-label-sm: Inter, sans-serif;
+
+  /* Font Sizes */
+  --font-size-display-lg: 48px;
+  --line-height-display-lg: 56px;
+  --letter-spacing-display-lg: -0.02em;
+
+  --font-size-display-lg-mobile: 32px;
+  --line-height-display-lg-mobile: 40px;
+
+  --font-size-headline-md: 24px;
+  --line-height-headline-md: 32px;
+
+  --font-size-body-lg: 18px;
+  --line-height-body-lg: 28px;
+
+  --font-size-body-md: 16px;
+  --line-height-body-md: 24px;
+
+  --font-size-label-sm: 12px;
+  --line-height-label-sm: 16px;
+  --letter-spacing-label-sm: 0.05em;
+}
+
+body {
+  background-color: #000000;
+  color: var(--color-on-surface);
+  overflow-x: hidden;
+  font-family: var(--font-body-md);
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 10px;
+}
+
+/* Glass Effect */
+.glass-nav {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Cinema Gradients */
+.cinema-gradient {
+  background: linear-gradient(0deg, #000000 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.8) 100%);
+}
+
+.hero-vignette {
+  background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%);
+}
+
+/* Movie Card Effects */
+.movie-card-glow:hover {
+  box-shadow: 0 0 20px 2px rgba(233, 196, 0, 0.15);
+  transform: scale(1.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+/* Material Symbols */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-primary-fixed-dim);
+  color: var(--color-on-primary-fixed);
+}
