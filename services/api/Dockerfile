@@ -51,6 +51,7 @@ COPY --from=dependencies --chown=nestjs:nodejs /app/prisma ./prisma
 # Copy built application from build stage
 COPY --from=build --chown=nestjs:nodejs /app/dist ./dist
 COPY --from=build --chown=nestjs:nodejs /app/package*.json ./
+COPY --from=build --chown=nestjs:nodejs /app/seed-prod.js ./
 
 # Generate Prisma Client in production stage
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
