@@ -384,14 +384,18 @@ export default function AdminDashboard() {
                 <div className="relative">
                   <input
                     type="file"
-                    accept="video/mp4,video/mpeg,video/quicktime"
+                    accept="video/mp4,video/mpeg,video/quicktime,video/*"
+                    capture="environment"
                     onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
                     disabled={isUploading}
-                    className="w-full bg-surface-container-high text-on-surface px-4 py-3 rounded-xl border border-outline-variant focus:border-primary focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-primary-container/80 disabled:opacity-50"
+                    className="w-full bg-surface-container-high text-on-surface px-4 py-3 rounded-xl border border-outline-variant focus:border-primary focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-primary-container/80 disabled:opacity-50 cursor-pointer"
                   />
+                  <p className="text-xs text-on-surface-variant mt-1">
+                    📱 Tap to select from gallery or device storage (Max 5GB)
+                  </p>
                   {videoFile && (
-                    <p className="mt-2 text-sm text-on-surface-variant">
-                      Selected: {videoFile.name} ({(videoFile.size / 1024 / 1024).toFixed(2)} MB)
+                    <p className="mt-2 text-sm text-primary-fixed-dim font-semibold">
+                      ✅ Selected: {videoFile.name} ({(videoFile.size / 1024 / 1024).toFixed(2)} MB)
                     </p>
                   )}
                 </div>
@@ -404,14 +408,17 @@ export default function AdminDashboard() {
                 </label>
                 <input
                   type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  accept="image/jpeg,image/jpg,image/png,image/webp,image/*"
                   onChange={(e) => setThumbnailFile(e.target.files?.[0] || null)}
                   disabled={isUploading}
-                  className="w-full bg-surface-container-high text-on-surface px-4 py-3 rounded-xl border border-outline-variant focus:border-primary focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-primary-container/80 disabled:opacity-50"
+                  className="w-full bg-surface-container-high text-on-surface px-4 py-3 rounded-xl border border-outline-variant focus:border-primary focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-primary-container/80 disabled:opacity-50 cursor-pointer"
                 />
+                <p className="text-xs text-on-surface-variant mt-1">
+                  📷 Tap to select image from gallery
+                </p>
                 {thumbnailFile && (
-                  <p className="mt-2 text-sm text-on-surface-variant">
-                    Selected: {thumbnailFile.name}
+                  <p className="mt-2 text-sm text-primary-fixed-dim font-semibold">
+                    ✅ Selected: {thumbnailFile.name}
                   </p>
                 )}
               </div>
@@ -423,11 +430,19 @@ export default function AdminDashboard() {
                 </label>
                 <input
                   type="file"
-                  accept="video/mp4,video/mpeg,video/quicktime"
+                  accept="video/mp4,video/mpeg,video/quicktime,video/*"
                   onChange={(e) => setTrailerFile(e.target.files?.[0] || null)}
                   disabled={isUploading}
-                  className="w-full bg-surface-container-high text-on-surface px-4 py-3 rounded-xl border border-outline-variant focus:border-primary focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-primary-container/80 disabled:opacity-50"
+                  className="w-full bg-surface-container-high text-on-surface px-4 py-3 rounded-xl border border-outline-variant focus:border-primary focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-container file:text-on-primary-container hover:file:bg-primary-container/80 disabled:opacity-50 cursor-pointer"
                 />
+                <p className="text-xs text-on-surface-variant mt-1">
+                  🎬 Tap to select trailer from gallery (Max 500MB)
+                </p>
+                {trailerFile && (
+                  <p className="mt-2 text-sm text-primary-fixed-dim font-semibold">
+                    ✅ Selected: {trailerFile.name}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -516,9 +531,9 @@ export default function AdminDashboard() {
 
               {/* Upload Progress */}
               {isUploading && (
-                <div className="bg-surface-container-high p-4 rounded-xl">
+                <div className="bg-surface-container-high p-4 rounded-xl border border-primary-fixed-dim/40">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-on-surface font-semibold">Uploading to Cloud...</span>
+                    <span className="text-on-surface font-semibold">📤 Uploading Files...</span>
                     <span className="text-primary-fixed-dim font-semibold">{uploadProgress}%</span>
                   </div>
                   <div className="w-full bg-surface-container-highest rounded-full h-2">
@@ -528,7 +543,7 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <p className="text-sm text-on-surface-variant mt-2">
-                    Please wait while we upload your video to AWS S3...
+                    ⏳ Please wait while we upload your video and images to the server...
                   </p>
                 </div>
               )}

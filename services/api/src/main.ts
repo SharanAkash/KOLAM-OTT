@@ -7,10 +7,19 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Enable CORS
+  // Enable CORS - Allow web app and ALB
+  const allowedOrigins = [
+    'http://localhost:3001',
+    'http://localhost:3000',
+    'http://kolam-ott-qa-alb-146970630.us-east-1.elb.amazonaws.com',
+    process.env.CORS_ORIGINS?.split(',') || [],
+  ].flat().filter(Boolean);
+
   app.enableCors({
-    origin: ['http://localhost:3001', 'http://localhost:3000'],
+    origin: allowedOrigins,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   // Enable validation
