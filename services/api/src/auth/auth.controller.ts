@@ -32,4 +32,9 @@ export class AuthController {
   async getProfile(@Request() req) {
     return this.authService.getProfile(req.user.userId);
   }
+
+  @Get('health')
+  async health() {
+    return { status: 'ok', timestamp: new Date().toISOString() };
+  }
 }

@@ -61,3 +61,5 @@ logs
 services/api/.env.qa
 infrastructure/terraform/outputs.json
 infrastructure/terraform/tfplan
+services/api/.env.mumbai
+infrastructure/ecs-mumbai-*-task-def.json

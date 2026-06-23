@@ -1,0 +1,62 @@
+{
+  "family": "kolam-ott-mumbai-api",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "kolam-ott-api",
+      "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/kolam-ott/mumbai/api:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3001,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "qa"
+        },
+        {
+          "name": "PORT",
+          "value": "3001"
+        },
+        {
+          "name": "USE_LOCAL_STORAGE",
+          "value": "true"
+        },
+        {
+          "name": "DATABASE_URL",
+          "value": "postgres://<user>:<pass>@<host>:5432/<db>?schema=public"
+        },
+        {
+          "name": "JWT_SECRET",
+          "value": "YOUR_JWT_SECRET"
+        },
+        {
+          "name": "PUBLIC_URL",
+          "value": "http://YOUR-ALB-URL.elb.amazonaws.com"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/kolam-ott-mumbai-api",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "api"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3001/api/auth/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ]
+}
