@@ -45,8 +45,8 @@ export default function LoginPage() {
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('token', data.access_token);
 
-        // Redirect based on role
-        const redirectPath = data.user.role === 'ADMIN' ? '/' : '/';
+        // Redirect based on role - Admins go to admin dashboard
+        const redirectPath = data.user.role === 'ADMIN' ? '/admin' : '/';
         router.push(redirectPath);
       } else {
         setError(data.message || 'Invalid email or password');

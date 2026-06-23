@@ -69,9 +69,9 @@ export async function authenticateUser(
   return { success: true, user: userWithoutPassword as User };
 }
 
-// Check if user is admin
+// Check if user is admin (handles both lowercase 'admin' and uppercase 'ADMIN')
 export function isAdmin(user: User | null): boolean {
-  return user?.role === 'admin';
+  return user?.role?.toLowerCase() === 'admin';
 }
 
 // Get redirect path - all users go to home
