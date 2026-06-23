@@ -57,8 +57,9 @@ COPY --from=build --chown=nestjs:nodejs /app/seed-prod.js ./
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 RUN npx prisma generate
 
-# Create uploads directory
-RUN mkdir -p uploads && chown -R nestjs:nodejs uploads
+# Create uploads directory with subdirectories
+RUN mkdir -p uploads/videos uploads/images uploads/thumbnails uploads/trailers && \
+    chown -R nestjs:nodejs uploads
 
 # Switch to non-root user
 USER nestjs
